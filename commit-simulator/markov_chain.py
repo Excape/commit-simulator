@@ -1,4 +1,5 @@
 import random
+from collections import OrderedDict
 
 BEGIN_STATE="__BEGIN_STATE__"
 END_STATE="__END_STATE__"
@@ -7,8 +8,8 @@ class State:
     
     def __init__(self, value):
         self.value = value
-        self._weights = dict()
-        self._counts = dict()
+        self._weights = OrderedDict()
+        self._counts = OrderedDict()
         self._sum = 0
 
 
@@ -49,10 +50,9 @@ class MarkovChain:
     def __init__(self):
         self._begin_state = State(BEGIN_STATE)
         self._end_state = State(END_STATE)
-        self._states = {
-            BEGIN_STATE: self._begin_state,
-            END_STATE: self._end_state
-        }
+        self._states = OrderedDict()
+        self._states[BEGIN_STATE] = self._begin_state
+        self._states[END_STATE] = self._end_state
 
 
     def get_state(self, value):
