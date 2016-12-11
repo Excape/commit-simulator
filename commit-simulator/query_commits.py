@@ -5,12 +5,12 @@ import re
 ALLOWED_CHARS = ' .!:/'
 
 TIMEOUT_MS = 10000
-PAGESIZE = 1000
+PAGESIZE = 100
 SQL_QUERY = 'SELECT payload FROM (          \
 TABLE_DATE_RANGE([githubarchive:day.],       \
     DATE_ADD(CURRENT_TIMESTAMP(), -1, "DAY"),\
     CURRENT_TIMESTAMP()                      \
-)) WHERE type = "PushEvent" LIMIT 100'
+)) WHERE type = "PushEvent" LIMIT 100'  # careful what you wish for!
 
 
 def query_githubarchive():
@@ -62,11 +62,9 @@ def decode_payloads(payloads):
     
 def query_commits():
     raw_payloads = query_githubarchive()
-    print(len(raw_payloads))
-    commits = decode_payloads(raw_payloads)
-    [print(c) for c in commits]
-    
-    
-    
+    print("{0} commits fetched".format(len(raw_payloads)))
+    return decode_payloads(raw_payloads)
+
+
 if __name__ == "__main__":
     query_commits()
