@@ -62,7 +62,7 @@ def decode_payloads(payloads):
     
 def query_commits():
     raw_payloads = query_githubarchive()
-    print("{0} commits fetched".format(len(raw_payloads)))
+    print("{0} push events fetched".format(len(raw_payloads)))
     return decode_payloads(raw_payloads)
 
 
