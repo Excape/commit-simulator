@@ -26,6 +26,8 @@ class State:
 
     def choose(self):
         """ From http://code.activestate.com/recipes/117241/ """
+        if not self._weights:
+            raise Exception("markov chain empty!")
         n = random.uniform(0, 1)
         for next_state, weight in self._weights.items():
             if n < weight:

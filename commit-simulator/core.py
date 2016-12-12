@@ -34,11 +34,28 @@ class CommitSimulator:
         return commit_words
 
 
+    def filter_swear_words(self):
+        """ 
+            Only include commits with swear words
+            Word list from https://github.com/astanway/Commit-Logs-From-Last-Night
+        """
+          
+        word_list = ["fuck", "bitch", "shit", "tit ", "asshole", "arsehole",
+            "cocksucker", "cunt", "hell ", "douche", "testicle", "twat", "bastard",
+            "sperm", "shit", "dildo", "wanker", "prick", "penis", "vagina",
+            "whore", "boner"]
+        filtered_list = []
+
+        for commit in self.commits:
+            if any(word in commit for word in word_list):
+                filtered_list.append(commit)
+
+        self.commits = filtered_list
 
 if __name__ == "__main__":
     commits = query_commits()
     cs = CommitSimulator(commits)
-
+    cs.filter_swear_words()
     cs.train_markov_chain()
     for x in range(20):
         print(cs.get_markov_string())
