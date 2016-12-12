@@ -8,28 +8,28 @@ class State:
     
     def __init__(self, value):
         self.value = value
-        self._weights = OrderedDict()
+        self.weights = OrderedDict()
         self._counts = OrderedDict()
         self._sum = 0
 
 
     def add_transition(self, other):
         self._sum += 1
-        if other in self._weights:
+        if other in self.weights:
             self._counts[other] += 1
         else:
             self._counts[other] = 1
-            self._weights[other] = 0
+            self.weights[other] = 0
 
         self._normalize_weights()
 
 
     def choose(self):
         """ From http://code.activestate.com/recipes/117241/ """
-        if not self._weights:
+        if not self.weights:
             raise Exception("markov chain empty!")
         n = random.uniform(0, 1)
-        for next_state, weight in self._weights.items():
+        for next_state, weight in self.weights.items():
             if n < weight:
                 break
             n = n - weight
@@ -38,12 +38,12 @@ class State:
 
     def print_weights(self):
         print("-- Node {0} --".format(self.value))
-        for state, weight in self._weights.items():
+        for state, weight in self.weights.items():
             print("\t{0}: {1}".format(state.value, str(weight)))
 
 
     def _normalize_weights(self):
-        self._weights = {state: count / self._sum for state, count in self._counts.items()}
+        self.weights = {state: count / self._sum for state, count in self._counts.items()}
 
 
 
@@ -85,6 +85,23 @@ class MarkovChain:
         # remove end state
         result.pop()
         return result
+        
+    def _get_states_from_path(self, path):
+        return [self.get_state(value) for value in path]
+
+    def calc_average_weight(self, path):
+        """ Multiply all weights through the path with length n and apply nth root """
+        path_states = self._get_states_from_path(path)
+        prod_weight = 1
+        current_state = self._begin_state
+
+        for state in path_states:
+            prod_weight *= current_state.weights[state]
+            current_state = state
+
+        prod_weight *= current_state.weights[self._end_state] # transistion to end state
+
+        return prod_weight ** (1.0/(len(path) + 1))
 
 
     def print_states(self):
@@ -107,6 +124,8 @@ if __name__ == "__main__":
     
     chain.print_states()
     
-    result = chain.choose_path()
-    print(result)
+    path = chain.choose_path()
+    print(path)
+    avg_weight = chain.calc_average_weight(path)
+    print(avg_weight)
     

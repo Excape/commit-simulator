@@ -17,8 +17,8 @@ class CommitSimulator:
 
 
     def get_markov_string(self):
-        result = self._chain.choose_path()
-        return " ".join(result)
+        path = self._chain.choose_path()
+        return " ".join(path), self._chain.calc_average_weight(path)
 
 
     def _split_messages(self, commits):
@@ -55,9 +55,10 @@ class CommitSimulator:
 if __name__ == "__main__":
     commits = query_commits()
     cs = CommitSimulator(commits)
-    cs.filter_swear_words()
+    # cs.filter_swear_words()
     cs.train_markov_chain()
     for x in range(20):
-        print(cs.get_markov_string())
+        result, avg_weight = cs.get_markov_string()
+        print("{0}: {1}\n".format(result, avg_weight))
     # print(cs._chain.print_states())
     print("States count: {0}".format(len(cs._chain._states)))
